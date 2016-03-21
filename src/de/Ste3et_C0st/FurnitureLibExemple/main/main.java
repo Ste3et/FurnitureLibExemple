@@ -17,7 +17,7 @@ public class main extends JavaPlugin{
 	@Override
 	public void onEnable(){
 		if(!Bukkit.getPluginManager().isPluginEnabled("FurnitureLib")){Bukkit.getPluginManager().disablePlugin(this);}
-		new Project("TestFurniture", this, getResource("testFurniture.yml"), PlaceableSide.BOTTOM, test.class);
+		new Project("TestFurniture", this, getResource("testFurniture.yml"), PlaceableSide.TOP, test.class);
 		instance = this;
 		FurnitureLib.getInstance().registerPluginFurnitures(this);
 	}

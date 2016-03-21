@@ -1,4 +1,4 @@
-testFurniture:
+TestFurniture:
   name: '&ctestFurniture'
   material: 383
   glow: false

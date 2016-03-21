@@ -34,12 +34,13 @@ public class test extends Furniture implements Listener{
 
 	
 	public void spawn(Location loc) {
-		fArmorStand stand = spawnArmorStand(loc);
+		fArmorStand stand = spawnArmorStand(getCenter());
 		stand.setBasePlate(false).setMarker(true).setHeadPose(getLutil().degresstoRad(new EulerAngle(0, 45, 0)));
-		stand.setName("TestArmorStand").setNameVasibility(true).setItemInMainHand(new ItemStack(Material.STICK));
+		stand.setName("TestArmorStand").setNameVasibility(true).setItemInMainHand(new ItemStack(Material.STICK)).setInvisible(true);
 		fArmorStand stand2 = stand.clone(new Relative(stand.getLocation(), 0, 1, 0, getBlockFace()));
-		stand2.setBasePlate(true).setArms(true).setNameVasibility(false);
+		stand2.setBasePlate(false).setArms(true).setNameVasibility(false).setInvisible(true);
 		send();
+		Bukkit.getPluginManager().registerEvents(this, main.instance);
 	}
 
 	@EventHandler
@@ -56,7 +57,16 @@ public class test extends Furniture implements Listener{
 
 	@EventHandler
 	public void onFurnitureClick(FurnitureClickEvent e) {
-		
+		if(getObjID()==null){return;}
+		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
+		if(e.isCancelled()){return;}
+		if(e.getID() == null || getObjID() == null) return;
+		if(!e.getID().equals(getObjID())){return;}
+		if(!canBuild(e.getPlayer())){return;}
+		for(fArmorStand stand : getObjID().getPacketList()){
+			stand.setName("§6"+stand.getName());
+		}
+		update();
 	}
 
 }

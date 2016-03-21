@@ -1,0 +1,7 @@
+name: FurnitureLibExemple
+version: 0.1
+description: N/A
+author: Ste3et_C0st
+website: http://dicecraft.de
+depend: [FurnitureLib]
+main: de.Ste3et_C0st.FurnitureLibExemple.main.main
