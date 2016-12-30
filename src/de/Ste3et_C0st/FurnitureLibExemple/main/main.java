@@ -25,13 +25,25 @@ public class main extends JavaPlugin implements Listener{
 	public void onEnable(){
 		if(!Bukkit.getPluginManager().isPluginEnabled("FurnitureLib")){Bukkit.getPluginManager().disablePlugin(this);}
 		instance = this;
+		
+		//Check if the Project <name> is registred at the time
 		if(FurnitureLib.getInstance().getFurnitureManager().getProject("tfight")==null){
+			//if it not register it new
+			//new Project(<name>, <plugin>, <InputStream>, <PlaceableSide>, <Class>)
+			//<name> = projectName
+			//<plugin> = the Plugin who manage the Object
+			//<InputStream> = the FurnitureMaker File *.yml
+			//<PlaceableSide> = this is the Side of the block if you can place it
+			//<Class> = the generator class if you call the ProjectLoader.class this is the FurnitureMaker ProejctLoader
+			//.setEditorProject(false) = if you want to Edit the Furniture after loading true/false
 			new Project("tfight", this, getResource("tfight.yml"), PlaceableSide.TOP, ProjectLoader.class).setEditorProject(false);
 		}
 		for(ObjectID id : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 			if(id.getProjectOBJ().getName().equalsIgnoreCase("tfight")){
 				if(!idList.contains(id)){
-					if(id.getSQLAction().equals(SQLAction.NOTHING)) continue;
+					//Check if the remove State is on
+					if(id.getSQLAction().equals(SQLAction.REMOVE)) continue;
+					//generate a new Object from the ObjectID
 					new handler(id);
 					idList.add(id);
 				}
@@ -43,6 +55,7 @@ public class main extends JavaPlugin implements Listener{
 	@Override
 	public void onDisable(){}
 	
+	//This is the FurnitureLateSpawn Event it will be called after all entitys and Blocks are placed
 	@EventHandler
 	public void onFurnitureLateSpawn(FurnitureLateSpawnEvent event){
 		if(event.getProject().getName().equalsIgnoreCase("tfight")){
