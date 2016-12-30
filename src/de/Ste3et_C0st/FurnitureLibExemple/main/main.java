@@ -14,6 +14,7 @@ import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class main extends JavaPlugin implements Listener{
 	
@@ -23,18 +24,19 @@ public class main extends JavaPlugin implements Listener{
 	@Override
 	public void onEnable(){
 		if(!Bukkit.getPluginManager().isPluginEnabled("FurnitureLib")){Bukkit.getPluginManager().disablePlugin(this);}
+		instance = this;
 		if(FurnitureLib.getInstance().getFurnitureManager().getProject("tfight")==null){
 			new Project("tfight", this, getResource("tfight.yml"), PlaceableSide.TOP, ProjectLoader.class).setEditorProject(false);
 		}
 		for(ObjectID id : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 			if(id.getProjectOBJ().getName().equalsIgnoreCase("tfight")){
 				if(!idList.contains(id)){
+					if(id.getSQLAction().equals(SQLAction.NOTHING)) continue;
 					new handler(id);
 					idList.add(id);
 				}
 			}
 		}
-		instance = this;
 		Bukkit.getPluginManager().registerEvents(this, this);
 	}
 	
