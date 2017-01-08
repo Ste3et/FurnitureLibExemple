@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import de.Ste3et_C0st.FurnitureLib.Events.PostFurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.PostFurnitureClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureHelper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -17,7 +18,7 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.Relative;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
-public class handler implements Listener{
+public class handler extends FurnitureHelper implements Listener{
 
 	//if you want to manipulate some ArmorStands you can use
 	//id.getPacketList().get(<int>) or
@@ -34,10 +35,8 @@ public class handler implements Listener{
 	 	FurnitureLib.getInstance().getFurnitureManager().createArmorStand(ObjectID, Location);
 	 */
 	
-	private ObjectID id;
-	
 	public handler(ObjectID id) {
-		this.id = id;
+		super(id);
 
 		//Register events to make this object useful
 		
@@ -48,9 +47,9 @@ public class handler implements Listener{
 	//PostFurnitureClickEvent will be called before FurnitureClickEvent
 	@EventHandler
 	public void onClick(PostFurnitureClickEvent e){
-		if(id==null) return;
+		if(getObjID()==null) return;
 		if(e.getID()==null) return;
-		if(!e.getID().equals(id)) return;
+		if(!e.getID().equals(getObjID())) return;
 		if(e.getID().getSQLAction().equals(SQLAction.REMOVE)) return;
 		fEntity newEntity = null;
 		for(fEntity entity : e.getID().getPacketList()){
@@ -61,16 +60,13 @@ public class handler implements Listener{
 		}
 		
 		if(newEntity == null){
-			LocationUtil util = FurnitureLib.getInstance().getLocationUtil();
 			FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
-			Location middle = util.getCenter(e.getID().getStartLocation());
-			middle.setYaw(e.getID().getStartLocation().getYaw());
-			BlockFace facedDirection = util.yawToFace(middle.getYaw());
-			Relative newLocation = new Relative(middle, 0, .2, 0, facedDirection);
-			fArmorStand stand = manager.createArmorStand(e.getID(), newLocation.getSecondLocation());
+			Location middle = getCenter();
+			Location newLocation = getRelative(middle, getBlockFace(), 0, 0).add(0, .2, 0);
+			fArmorStand stand = manager.createArmorStand(e.getID(), newLocation);
 			stand.setName("test");
 			//You must be send the ArmorStand to all players who are in the radius
-			stand.send(e.getID().getPlayerList());
+			update();
 		}else{
 			e.getPlayer().sendMessage("Hallo :)");
 		}
@@ -79,9 +75,9 @@ public class handler implements Listener{
 	
 	@EventHandler
 	public void onBreak(PostFurnitureBreakEvent e){
-		if(id==null) return;
+		if(getObjID()==null) return;
 		if(e.getID()==null) return;
-		if(!e.getID().equals(id)) return;
+		if(!e.getID().equals(getObjID())) return;
 		if(e.getID().getSQLAction().equals(SQLAction.REMOVE)) return;
 		boolean b = true;
 		for(fEntity entity : e.getID().getPacketList()){
